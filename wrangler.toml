@@ -1,4 +1,4 @@
-name = "{{project-name}}"
+name = "sumansid_project"
 type = "javascript"
 account_id = ""
 workers_dev = true
