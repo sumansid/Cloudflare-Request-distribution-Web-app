@@ -8,12 +8,7 @@
  * @author Suman Sigdel.
  * @Date  04/21/2020
  */
- 
 /** 
-
-
-
-
 
 addEventListener('fetch', event => {	
   event.respondWith(handleRequest(event.request))
@@ -27,12 +22,10 @@ const url = "https://cfw-takehome.developers.workers.dev/api/variants";
 
 // Element handler class  -- Bonus Points
 class ElementHandler {
-
 	element(element) {
     // An incoming element, such as `div`
     
   }
-
   comments(comment) {
     // An incoming comment
   }
@@ -43,8 +36,6 @@ class ElementHandler {
 
 }
 
-
-
 //Generate random number
 function getrand(min, max) {
     min = Math.ceil(min);
@@ -52,9 +43,7 @@ function getrand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
 // Handle Request
-
 async function handleRequest(request) {
 	const v = await fetch(url)
 	console.log(JSON.stringify(v))
@@ -76,7 +65,6 @@ async function handleRequest(request) {
 		response = setCookie("url", index, response)
 		return response;
 	}
-
 }
 
 // Set cookies function
@@ -105,9 +93,6 @@ function getCookie(key, req) {
     }
     return null;
 }
-
-
-
 
 // Main guideline
 
@@ -155,6 +140,3 @@ This is an extra credit task and you won't be penalized for skipping this one, w
 
 
 */
-
-
-
