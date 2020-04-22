@@ -19,6 +19,7 @@ function getrand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+
 async function handleRequest(request) {
 	let variants = await fetch(url).then((resp)=>{return resp.json()});
 	let varArray = variants.variants
@@ -34,6 +35,7 @@ async function handleRequest(request) {
 		response = setCookie("url", index, response)
 		return buildResponse(response, index);
 	}
+
 }
 
 async function buildResponse(response, index){
