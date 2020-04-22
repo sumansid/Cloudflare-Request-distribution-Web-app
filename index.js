@@ -7,29 +7,9 @@ addEventListener('fetch', event => {
 */
 
 const url = "https://cfw-takehome.developers.workers.dev/api/variants";
-
-// Element handler class  -- Bonus Points
-class ElementHandler {
-
-	element(element) {
-    // An incoming element, such as `div`
-    var tag = element.tagName;
-    console.log(`Incoming element: ${element.tagName}`)
-    if (tag == "h1" || tag == "title") {
-    	element.setInnerContent("Suman's Cloudflare Project");
-    }
-  }
-
-  comments(comment) {
-    // An incoming comment
-  }
-
-  text(text) {
-    // An incoming piece of text
-  }
-
-}
-
+const pokemonUrl = "https://pokeapi.co/api/v2/pokemon/pikachu"
+const pokemonUrl2 = "https://pokeapi.co/api/v2/pokemon/ditto"
+const githubURL = "https://wwww.github.com/users/sumansid";
 
 
 //Generate random number
@@ -40,49 +20,58 @@ function getrand(min, max) {
 }
 
 
-
 async function handleRequest(request) {
-	const v = await fetch(url)
-	console.log(JSON.stringify(v))
+	
 	let variants = await fetch(url).then((resp)=>{return resp.json()});
-	let oursite = await fetch('http://localhost:8787/')
-	//console.log(variants)
+	let pikachuinfo = await fetch(pokemonUrl).then((resp)=>{return resp.json()});
+	let dittoinfo = await fetch(pokemonUrl2).then((resp)=>{return resp.json()});
+	
 	let varArray = variants.variants
-	//console.log(varArray)
-	console.log("reqeust headers", request.headers)
-	let cIndex = getCookie("url", request)
+	
+	console.log("reqeust headers", request.headers.get("Cookie"))
+	//let cookies = request.headers.get("Cookie")
+	let cIndex = getCookie(request, "url")
 	if(cIndex != null){
 		console.log("loading from cookie index ", cIndex)
 		var single_url = varArray[cIndex];
 		let response = await fetch(single_url);
+		const elementHandler = new ElementHandler(dittoinfo.name)
+		const elementDescription = new ElementHandler(dittoinfo.order)
+		response = new HTMLRewriter()
+		.on("h1#title", elementHandler)//we wants to change the element with ID title
+		.on("p#description", elementDescription)
+		.transform(response)
+
 		return response;
 	}else{
 		let index = getrand(0, varArray.length-1)
 		var single_url = varArray[index]
-		console.log("loading out of cookie for index", index, "and url", single_url)
 		let response = await fetch(single_url);
 		response = setCookie("url", index, response)
+		const elementHandler = new ElementHandler(pikachuinfo.name)
+		const elementDescription = new ElementHandler(pikachuinfo.order)
+		const elementURL = new ElementHandler(githubURL)
+		response = new HTMLRewriter()
+		.on("h1#title", elementHandler)
+		.on("p#description", elementDescription)
+		.on("a#url", elementURL)
+		.on("href", elementURL)
+		.transform(response)
 		return response;
 	}
 
-
-	
-	
-	//console.log(getCookie("url", response))
-	//setCookie("url", single_url, response)
-
-	//console.log(cookies)
-
-	//heere
-	//ElementHandler( )
-	//var x = document.
-	//return response
-	//return setCookie("url", single_url.index, response) //new HTMLRewriter().on('title', new ElementHandler()).transform(response)
-	
-	// return response
 }
 
-
+class ElementHandler {
+	//here in the constructor, we can receive some information from request
+	constructor(value){
+		this.value = value
+	}
+	element(element) {
+		
+		element.setInnerContent(this.value)
+	}
+}
 
 function setCookie(key,value, resp) {
 	const newRes = new Response(resp.body, resp)
@@ -92,77 +81,19 @@ function setCookie(key,value, resp) {
 	console.log("saving cookie", cookie)
 	return newRes;
 }
-function getCookie(key, req) {
-	let cookieData = req.headers.get("Cookie");
-	if (cookieData != null) {
-        let cList = cookieData.split(";");
-        
-        for (let cookie of cList) {
 
-            let cookieIdx = cookie.split("=");
-            if (cookieIdx[0] === key) {
-                return cookieIdx[1];
-            }
-        }
-    }
-    return null;
+function getCookie(request, name) {
+  let result = null
+  let cookieString = request.headers.get("Cookie")
+  if (cookieString) {
+    let cookies = cookieString.split(";")
+    cookies.forEach((cookie) => {
+      let cookieName = cookie.split("=")[0].trim()
+      if (cookieName === name) {
+        let cookieVal = cookie.split("=")[1]
+        result = cookieVal
+      }
+    })
+  }
+  return result
 }
-
-
-
-
-// Bonus Points
-/*
-1. Changing copy/URLs
-For each variant page, there are a number of items on the page that can be customized. Try changing the following values inside of the variant, adding your own text or URLs:
-
-title: the title of the web page, displayed on the window or tab title in your browser.
-h1#title: the main title of the page. By default, this displays "Variant 1" or "Variant 2"
-p#description: the description paragraph on the page. By default, this displays the text "This is variant X of the take home project!".
-a#url: a Call to Action link with strong emphasis on the page. Try changing this to a URL of your choice, such as your personal website, and make sure to update the text "Return to cloudflare.com" as well!
-This can be done using the HTMLRewriter API built into the Workers runtime, or using simple text replacement.
-
-2. Persisting variants
-If a user visits the site and receives one of the two URLs, 
-persist which URL is chosen in a cookie so 
-that they always see the same variant when they return to the application. 
-A cookie would be a great way to implement this!
-
-3. Publish to a domain
-If you have a registered domain/zone with Cloudflare, try deploying your project by customizing the zone_id and route in your wrangler.toml. 
-Make sure to check out the Quick Start in the Workers docs for details on how to do this! 
-Note: domains cost money, so if you don't have one, please don't feel obligated to buy one for this exercise. 
-This is an extra credit task and you won't be penalized for skipping this one, we promise!
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-// Main guideline
-
-
-/*
-1. Request the URLs from the API
-Make a fetch request inside of your script's event handler to the URL 
-https://cfw-takehome.developers.workers.dev/api/variants, 
-and parse the response as JSON. 
-The response will be an array of URLs, which should be saved to a variable.
-
-2. Request a (random: see #3) variant
-Make a fetch request to one of the two URLs, and return it as the response from the script.
-
-3. Distribute requests between variants
-The /api/variants API route will return an array of two URLs. 
-Requests should be evenly distributed between the two urls, in A/B testing style. 
-This means that when a client makes a request to the Workers script, 
-the script should roughly return each variant around 50% of the time.
-
-*/
