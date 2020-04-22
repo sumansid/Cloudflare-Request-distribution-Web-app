@@ -1,15 +1,3 @@
-/**
- * Suman Sigdel's Cloudflare internship Application (Full Stack)
- *
- * Description. (use period)
- *
- * @link   URL
- *
- * @author Suman Sigdel.
- * @Date  04/21/2020
- */
-/** 
-
 addEventListener('fetch', event => {	
   event.respondWith(handleRequest(event.request))
 })
@@ -22,10 +10,16 @@ const url = "https://cfw-takehome.developers.workers.dev/api/variants";
 
 // Element handler class  -- Bonus Points
 class ElementHandler {
+
 	element(element) {
     // An incoming element, such as `div`
-    
+    var tag = element.tagName;
+    console.log(`Incoming element: ${element.tagName}`)
+    if (tag == "h1" || tag == "title") {
+    	element.setInnerContent("Suman's Cloudflare Project");
+    }
   }
+
   comments(comment) {
     // An incoming comment
   }
@@ -36,6 +30,8 @@ class ElementHandler {
 
 }
 
+
+
 //Generate random number
 function getrand(min, max) {
     min = Math.ceil(min);
@@ -43,13 +39,16 @@ function getrand(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Handle Request
+
+
 async function handleRequest(request) {
 	const v = await fetch(url)
 	console.log(JSON.stringify(v))
 	let variants = await fetch(url).then((resp)=>{return resp.json()});
-	//let oursite = await fetch('http://localhost:8787/')
+	let oursite = await fetch('http://localhost:8787/')
+	//console.log(variants)
 	let varArray = variants.variants
+	//console.log(varArray)
 	console.log("reqeust headers", request.headers)
 	let cIndex = getCookie("url", request)
 	if(cIndex != null){
@@ -65,9 +64,26 @@ async function handleRequest(request) {
 		response = setCookie("url", index, response)
 		return response;
 	}
+
+
+	
+	
+	//console.log(getCookie("url", response))
+	//setCookie("url", single_url, response)
+
+	//console.log(cookies)
+
+	//heere
+	//ElementHandler( )
+	//var x = document.
+	//return response
+	//return setCookie("url", single_url.index, response) //new HTMLRewriter().on('title', new ElementHandler()).transform(response)
+	
+	// return response
 }
 
-// Set cookies function
+
+
 function setCookie(key,value, resp) {
 	const newRes = new Response(resp.body, resp)
 	let expire = new Date() * 60 * 24 * 30 * 365 
@@ -76,8 +92,6 @@ function setCookie(key,value, resp) {
 	console.log("saving cookie", cookie)
 	return newRes;
 }
-
-// Get cookie function
 function getCookie(key, req) {
 	let cookieData = req.headers.get("Cookie");
 	if (cookieData != null) {
@@ -94,26 +108,8 @@ function getCookie(key, req) {
     return null;
 }
 
-// Main guideline
 
 
-/*
-1. Request the URLs from the API
-Make a fetch request inside of your script's event handler to the URL 
-https://cfw-takehome.developers.workers.dev/api/variants, 
-and parse the response as JSON. 
-The response will be an array of URLs, which should be saved to a variable.
-
-2. Request a (random: see #3) variant
-Make a fetch request to one of the two URLs, and return it as the response from the script.
-
-3. Distribute requests between variants
-The /api/variants API route will return an array of two URLs. 
-Requests should be evenly distributed between the two urls, in A/B testing style. 
-This means that when a client makes a request to the Workers script, 
-the script should roughly return each variant around 50% of the time.
-
-*/
 
 // Bonus Points
 /*
@@ -138,5 +134,35 @@ Make sure to check out the Quick Start in the Workers docs for details on how to
 Note: domains cost money, so if you don't have one, please don't feel obligated to buy one for this exercise. 
 This is an extra credit task and you won't be penalized for skipping this one, we promise!
 
+
+*/
+
+
+
+
+
+
+
+
+
+
+// Main guideline
+
+
+/*
+1. Request the URLs from the API
+Make a fetch request inside of your script's event handler to the URL 
+https://cfw-takehome.developers.workers.dev/api/variants, 
+and parse the response as JSON. 
+The response will be an array of URLs, which should be saved to a variable.
+
+2. Request a (random: see #3) variant
+Make a fetch request to one of the two URLs, and return it as the response from the script.
+
+3. Distribute requests between variants
+The /api/variants API route will return an array of two URLs. 
+Requests should be evenly distributed between the two urls, in A/B testing style. 
+This means that when a client makes a request to the Workers script, 
+the script should roughly return each variant around 50% of the time.
 
 */
