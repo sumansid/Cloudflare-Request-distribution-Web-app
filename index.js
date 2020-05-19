@@ -86,15 +86,11 @@ class LinkHandler {
 }
 
 class ImageHandler {
-	//here in the constructor, we can receive some information from request
 	constructor(alt, url){
 		this.alt = alt
         this.url = url;
 	}
-	//and here wwe will replace some attribute from DOM element
 	element(element) {
-		//we can use any DOM selector
-		//the innerHTML change the content of element
 		element.tagName = "img"
         element.setAttribute("src", this.url)
         element.setAttribute("alt", this.alt)
