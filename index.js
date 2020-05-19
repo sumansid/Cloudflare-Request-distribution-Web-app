@@ -59,11 +59,9 @@ async function buildResponse(response, index){
 
 
 class ElementHandler {
-	//here in the constructor, we can receive some information from request
 	constructor(value){
 		this.value = value
 	}
-	//and here wwe will replace some attribute from DOM element
 	element(element) {
 		//we can use any DOM selector
 		//the innerHTML change the content of element
