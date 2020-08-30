@@ -38,7 +38,7 @@ Note that a major benefit of using `wrangler dev` is the ability to output `cons
 ## Requirements
 
 ### 1. Request the URLs from the API 
-- [x]
+:white_check_mark:
 
 Make a fetch request inside of your script's event handler to the URL `https://cfw-takehome.developers.workers.dev/api/variants`, and parse the response as JSON. The response will be an array of URLs, which should be saved to a variable.
 
